@@ -1,8 +1,10 @@
 package com.lwansbrough.ReactCamera;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -47,8 +49,15 @@ public class ReactCameraModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void capture(ReadableMap options, final Callback callback) {
         Camera camera = cameraInstanceManager.getCamera(options.getString("type"));
-        camera.takePicture(null, null, new PictureTakenCallback(options, callback, reactContext));
+        camera.takePicture(shutterCallback, null, new PictureTakenCallback(options, callback, reactContext));
     }
+
+    private final Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+        public void onShutter() {
+            AudioManager mgr = (AudioManager) reactContext.getSystemService(Context.AUDIO_SERVICE);
+            mgr.playSoundEffect(AudioManager.FLAG_PLAY_SOUND);
+        }
+    };
 
     private class PictureTakenCallback implements Camera.PictureCallback {
         ReadableMap options;
