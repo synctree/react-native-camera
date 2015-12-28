@@ -48,6 +48,7 @@ class ReactCameraView extends SurfaceView implements SurfaceHolder.Callback {
                 camera.setPreviewDisplay(getHolder());
                 cameraInstanceManager.updateCameraOrientation(camera);
                 camera.startPreview();
+                setFoucs();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -55,6 +56,14 @@ class ReactCameraView extends SurfaceView implements SurfaceHolder.Callback {
             camera = cameraInstanceManager.getCamera(cameraId);
             surfaceCreated(getHolder());
         }
+    }
+
+    private void setFoucs(){
+        //set camera to continually auto-focus
+        Camera.Parameters params = camera.getParameters();
+
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        camera.setParameters(params);
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {

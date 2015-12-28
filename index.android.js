@@ -85,23 +85,38 @@ var ReactCameraViewWrapper = React.createClass({
 
     capture (options, callback) {
         var component = this;
-        var defaultOptions = {
-            type: component.props.type,
-            target: component.props.captureTarget,
-            sampleSize: 0,
-            title: '',
-            description: ''
-        };
-        return new Promise(function(resolve, reject) {
-            if (!callback && typeof options === 'function') {
-                callback = options;
-                options = {};
-            }
-            ReactNativeCameraModule.capture(Object.assign(defaultOptions, options || {}), function(encoded) {
-                if (typeof callback === 'function') callback(encoded);
-                resolve(encoded);
-            });
-        });
+        // var defaultOptions = {
+        //     type: component.props.type,
+        //     target: component.props.captureTarget,
+        //     sampleSize: 0,
+        //     title: '',
+        //     description: ''
+        // };
+        // return new Promise(function(resolve, reject) {
+        //     if (!callback && typeof options === 'function') {
+        //         callback = options;
+        //         options = {};
+        //     }
+        //     ReactNativeCameraModule.capture(Object.assign(defaultOptions, options || {}), function(encoded) {
+        //         if (typeof callback === 'function') callback(encoded);
+        //         resolve(encoded);
+        //     });
+        // });
+
+        options = {
+          type: component.props.type,
+          target: component.props.captureTarget,
+          sampleSize: 0,
+          title: '',
+          description: ''
+        }
+
+        if (!callback && typeof options === 'function') {
+           callback = options;
+           options = {};
+        }
+
+        ReactNativeCameraModule.capture(options, callback);
     }
 });
 
