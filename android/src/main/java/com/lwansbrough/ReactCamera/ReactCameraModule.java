@@ -125,8 +125,9 @@ public class ReactCameraModule extends ReactContextBaseJavaModule {
                         fOut.close();
 
                         String imagePath = file.getAbsolutePath();
-                        rotateImage(imagePath);
+
                         MediaStore.Images.Media.insertImage(reactContext.getContentResolver(), imagePath, file.getName(), file.getName());
+
                         callback.invoke(null, imagePath);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -138,48 +139,6 @@ public class ReactCameraModule extends ReactContextBaseJavaModule {
 
                 break;
             }
-        }
-    }
-
-    private void rotateImage(String imagePath){
-        try {
-            File file = new File(imagePath);
-            ExifInterface exif = new ExifInterface(file.getPath());
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-
-            int angle = 0;
-
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
-                angle = 90;
-            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-                angle = 180;
-            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                angle = 270;
-            }
-
-            Log.e("angle", String.valueOf(angle));
-            Matrix mat = new Matrix();
-            mat.postRotate(angle);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 0;
-
-            Bitmap oldBmp = BitmapFactory.decodeStream(new FileInputStream(file),
-                    null, options);
-            Bitmap newBmp = Bitmap.createBitmap(oldBmp, 0, 0, oldBmp.getWidth(),
-                    oldBmp.getHeight(), mat, true);
-
-            OutputStream fOut = null;
-            fOut = new FileOutputStream(file);
-            newBmp.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
-            fOut.flush();
-            fOut.close();
-
-        } catch (IOException e) {
-            Log.w("TAG", "-- Error in setting image");
-        } catch (OutOfMemoryError oom) {
-            Log.w("TAG", "-- OOM Error in setting image");
         }
     }
 }
